@@ -39,3 +39,12 @@ class Graph:
             self.ta_adj_list[edge.ta].remove(edge.course)  
         if edge.ta in self.course_adj_list[edge.course]:
             self.course_adj_list[edge.course].remove(edge.ta)
+
+class Matching(Graph):
+    def __init__(self, courses, tas, edges):
+        super().__init__(courses, tas, edges)
+        self.curr_matched_ta = dict.fromkeys(tas, None)
+        self.curr_matched_courses = dict.fromkeys(courses, None)
+        self.matched = 0
+        self.visited_ta = dict.fromkeys(tas, False)
+        self.visited_courses = dict.fromkeys(courses, False)
