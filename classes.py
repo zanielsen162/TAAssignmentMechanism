@@ -20,31 +20,23 @@ class Edge:
 
 class Graph:
     def __init__(self, courses, tas, edges):
-        self.ta_adj_list = dict.fromkeys(tas, [])
-        self.course_adj_list = dict.fromkeys(courses, [])
+        self.adj_list = dict.fromkeys(tas + courses, [])
         for e in edges:
-            if e.course not in self.ta_adj_list[e.ta]:
-                self.ta_adj_list[e.ta].append(e.course)
-            if e.ta not in self.course_adj_list[e.course]:
-                self.course_adj_list[e.course].append(e.ta)
+            self.add_edge(e)
     
-    def add_edge(self, new_edge):
-        if new_edge.course not in self.ta_adj_list[new_edge.ta]:
-            self.ta_adj_list[new_edge.ta].append(new_edge.course)
-        if new_edge.ta not in self.course_adj_list[new_edge.course]:
-            self.course_adj_list[new_edge.course].append(new_edge.ta)
+    def add_edge(self, e):
+        if e.course not in self.adj_list[e.ta.id] and e.ta not in self.adj_list[e.course.id]:
+            self.adj_list[e.ta.id].append(e.course)
+            self.adj_list[e.course.id].append(e.ta)
      
     def remove_edge(self, edge):
-        if edge.course in self.ta_adj_list[edge.ta]:
-            self.ta_adj_list[edge.ta].remove(edge.course)  
-        if edge.ta in self.course_adj_list[edge.course]:
-            self.course_adj_list[edge.course].remove(edge.ta)
+        if edge.course in self.ta_adj_list[edge.ta.id] and edge.ta in self.course_adj_list[edge.course.id]:
+            self.adj_list[edge.ta.id].remove(edge.course)  
+            self.adj_list[edge.course.id].remove(edge.ta)
 
 class Matching(Graph):
     def __init__(self, courses, tas, edges):
         super().__init__(courses, tas, edges)
-        self.curr_matched_ta = dict.fromkeys(tas, None)
-        self.curr_matched_courses = dict.fromkeys(courses, None)
+        self.curr_match = dict.fromkeys(tas + courses, None)
         self.matched = 0
-        self.visited_ta = dict.fromkeys(tas, False)
-        self.visited_courses = dict.fromkeys(courses, False)
+        self.visited = dict.fromkeys(tas + courses, False)
