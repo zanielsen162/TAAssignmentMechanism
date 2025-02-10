@@ -44,7 +44,9 @@ def try_augmenting_path(graph, node):
     for visit in graph.ta_adj_list[node.id]:
         if graph.curr_match[visit.id] == None or try_augmenting_path(visit):
             graph.curr_match[visit.id] = node
+            graph.curr_match[node.id] = visit
             return True
     return False
 
-## TO DO: remove the split adjacency list (ie convert functions to just work with one)
+def matching(graph):
+    for 
