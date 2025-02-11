@@ -70,8 +70,6 @@ edge_6 = Edge(ta_3, course_2)
 
 graph = Matching([course_1, course_2], [ta_1, ta_2, ta_3], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
 for val in graph.adj_list.keys():
-    print(val.id, ':', graph.adj_list[val])# [x.id for x in graph.adj_list[val]])
+    print(val.id, ':', graph.adj_list[val])
 matching(graph)
 graph.print_matches()
-
-# issue: courses can get matched to courses
