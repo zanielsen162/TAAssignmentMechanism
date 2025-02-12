@@ -41,8 +41,6 @@ class Graph:
         if e.course not in self.adj_list[e.ta] and e.ta not in self.adj_list[e.course]:
             self.adj_list[e.ta].append(e.course)
             self.adj_list[e.course].append(e.ta)
-            print('ta', self.adj_list[e.ta])
-            print('course', self.adj_list[e.course])
      
     def remove_edge(self, edge):
         if edge.course in self.ta_adj_list[edge.ta] and edge.ta in self.course_adj_list[edge.course]:
