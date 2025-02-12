@@ -49,11 +49,11 @@ class Graph:
             self.adj_list[edge.ta].remove(edge.course)  
             self.adj_list[edge.course].remove(edge.ta)
 
-class Matching(Graph):
+
+class MatchingGraph(Graph):
     def __init__(self, courses, tas, edges):
         super().__init__(courses, tas, edges)
         self.curr_match = dict.fromkeys(self.adj_list.keys(), None)
-        self.matched = 0
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
     
     def print_matches(self):
@@ -65,3 +65,8 @@ class Matching(Graph):
         for key in self.curr_match.keys():
             if self.curr_match[key] == None:
                 print(key.id)
+
+    def add_node(self, node):
+        self.adj_list.update({node: []})
+        self.curr_match.update({node: None})
+        self.visited.update({node: False})

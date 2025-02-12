@@ -54,9 +54,30 @@ def matching(graph):
         try_augmenting_path(graph, val)
     return graph
 
-ta_1 = Applicant("1", 3.5, "Junior", ["CS 225", "CS 173"], ["Python", "Java"], ["CS 173"], ["CS 225", "CS 173"])
-ta_2 = Applicant("2", 3.8, "Senior", ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
-ta_3 = Applicant("3", 3.6, "Junior", ["CS 225", "CS 173"], ["Python", "Java"],  [], ["CS 225", "CS 173"])
+def complete_matching(applicant_list, edge_list, course_list):
+    phd_applicant_list = [student for student in applicant_list if student.class_level is True]
+    edge_list = [edge for edge in edge_list if edge.ta.class_level is True]
+    phd_graph = MatchingGraph(phd_applicant_list, edge_list, course_list)
+
+    phd_matching = matching(phd_graph)
+    masters_applicant_list = [student for student in applicant_list if student.class_level is False]
+    masters_edge_list = [student for student in applicant_list if student.clas_level is False]
+    for student in masters_applicant_list: 
+        phd_graph.add_node(student)
+    
+    for edge in masters_edge_list: 
+        phd_graph.add_edge(edge)
+
+    final_matching = matching(phd_graph)
+    
+    return final_matching
+
+
+
+
+ta_1 = Applicant("1", 3.5, "False", ["CS 225", "CS 173"], ["Python", "Java"], ["CS 173"], ["CS 225", "CS 173"])
+ta_2 = Applicant("2", 3.8, "True", ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
+ta_3 = Applicant("3", 3.6, "True", ["CS 225", "CS 173"], ["Python", "Java"],  [], ["CS 225", "CS 173"])
 
 course_1 = Course("CS 225", ["Python", "Java"])
 course_2 = Course("CS 173", ["Python", "Java"])
@@ -68,8 +89,8 @@ edge_4 = Edge(ta_2, course_2)
 edge_5 = Edge(ta_3, course_1)
 edge_6 = Edge(ta_3, course_2)
 
-graph = Matching([course_1, course_2], [ta_1, ta_2, ta_3], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
+graph = MatchingGraph([course_1, course_2], [ta_1, ta_2, ta_3], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
 for val in graph.adj_list.keys():
     print(val.id, ':', graph.adj_list[val])
-matching(graph)
-graph.print_matches()
+final_graph = complete_matching([ta_1, ta_2, ta_3], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6], [course_1, course_2])
+final_graph.print_matches()
