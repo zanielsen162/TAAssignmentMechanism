@@ -61,7 +61,7 @@ def complete_matching(applicant_list, edge_list, course_list):
 
     phd_matching = matching(phd_graph)
     masters_applicant_list = [student for student in applicant_list if student.class_level is False]
-    masters_edge_list = [student for student in applicant_list if student.clas_level is False]
+    masters_edge_list = [edge for edge in edge_list if edge.ta in masters_applicant_list]
     for student in masters_applicant_list: 
         phd_graph.add_node(student)
     
