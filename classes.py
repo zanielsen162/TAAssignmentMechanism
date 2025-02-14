@@ -1,13 +1,20 @@
-class Course:
-    def __init__(self, id, attributes):
+class CourseReq: 
+    def __init__(self, id, attributes, requred_ta_count):
         self.id = id
+        self.attributes = attributes
+        self.required_ta_count = requred_ta_count
+    
+class Course:
+    def __init__(self, id, ta_req_nbr, attributes):
+        self.id = id
+        self.ta_req_nbr = ta_req_nbr
         self.attributes = attributes
 
     def __hash__(self):
         return hash(self.id)
 
     def __eq__(self, other):
-        return isinstance(other, Course) and self.id == other.id
+        return isinstance(other, Course) and self.id == other.id and self.ta_req_nbr == other.ta_req_nbr 
 
 class Applicant:
     def __init__(self, id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses):
@@ -25,8 +32,13 @@ class Applicant:
     def __eq__(self, other):
         return isinstance(other, Applicant) and self.id == other.id
 
+class CourseTAEdge:
+    def __init__(self, ta_app, course_req: CourseReq):
+        self.ta = ta_app
+        self.course_req = course_req
+
 class Edge:
-    def __init__(self, ta_app, course):
+    def __init__(self, ta_app, course: Course):
         self.ta = ta_app
         self.course = course
 
