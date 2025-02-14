@@ -32,6 +32,8 @@ class Edge:
 
 class Graph:
     def __init__(self, courses, tas, edges):
+        self.tas = tas
+        self.courses = courses
         self.adj_list = {course: [] for course in courses}
         self.adj_list.update({ta: [] for ta in tas})
         for e in edges:
@@ -68,3 +70,9 @@ class MatchingGraph(Graph):
         self.adj_list.update({node: []})
         self.curr_match.update({node: None})
         self.visited.update({node: False})
+
+    def check_phd_matched(self):
+        for ta in self.tas:
+            if self.curr_match[ta] is None:
+                return False
+        return True

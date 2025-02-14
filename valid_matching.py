@@ -61,6 +61,9 @@ def complete_matching(applicant_list, course_list, edge_list):
     final_graph = MatchingGraph(course_list, phd_applicant_list, edge_list)
     
     matching(final_graph)
+    
+    if not final_graph.check_phd_matched():
+        return 'No valid matching'
 
     masters_applicant_list = [student for student in applicant_list if student.class_level is False]
     masters_edge_list = [edge for edge in edge_list if edge.ta.class_level is False]
@@ -79,7 +82,7 @@ def complete_matching(applicant_list, course_list, edge_list):
 
 
 ta_1 = Applicant("1", 3.5, True, ["CS 225", "CS 173"], ["Python", "Java"], ["CS 173"], ["CS 225", "CS 173"])
-ta_2 = Applicant("2", 3.8, False, ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
+ta_2 = Applicant("2", 3.8, True, ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
 ta_3 = Applicant("3", 3.6, True, ["CS 225", "CS 173"], ["Python", "Java"],  [], ["CS 225", "CS 173"])
 
 course_1 = Course("CS 225", ["Python", "Java"])
@@ -98,4 +101,7 @@ graph.print_matches()
 print('---')
 final_graph = complete_matching([ta_1, ta_2, ta_3], [course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
 
-final_graph.print_matches()
+try:
+    final_graph.print_matches()
+except:
+    print(final_graph)
