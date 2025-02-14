@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+
 from classes import *
 
 # int n, k;
@@ -82,7 +82,7 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     return final_graph
 
-def get_courses_and_edges(course_req_list: Iterable[CourseReq], course_ta_edge_list: Iterable[CourseTAEdge]):
+def get_courses_and_edges(course_req_list: CourseReq, course_ta_edge_list: CourseTAEdge):
     courses = []
     edges = []
 
