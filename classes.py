@@ -76,3 +76,9 @@ class MatchingGraph(Graph):
             if self.curr_match[ta] is None:
                 return False
         return True
+    
+    def check_courses_matched(self):
+        for course in self.courses:
+            if self.curr_match[course] is None:
+                return False
+        return True

@@ -76,6 +76,9 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     matching(final_graph)
     
+    if not final_graph.check_courses_matched():
+        return 'No valid matching'
+
     return final_graph
 
 
