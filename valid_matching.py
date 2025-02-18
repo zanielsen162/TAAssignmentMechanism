@@ -55,7 +55,8 @@ def try_augmenting_path(graph, node):
     return False
 
 def matching(graph):
-    for val in graph.adj_list.keys():
+    #for val in graph.adj_list.keys():
+    for val in graph.courses:
         graph.visited = dict.fromkeys(graph.visited.keys(), False)
         try_augmenting_path(graph, val)
     return graph
