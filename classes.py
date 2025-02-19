@@ -93,3 +93,11 @@ class MatchingGraph(Graph):
             if self.curr_match[course] is None:
                 return False
         return True
+
+
+# represents the course requirement as specified by the dept/prof
+class CourseRequirement: 
+    def __init__(self, id, attributes, requred_ta_count):
+        self.id = id
+        self.attributes = attributes
+        self.required_ta_count = requred_ta_count

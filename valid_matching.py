@@ -1,45 +1,6 @@
 from collections.abc import Iterable
 from classes import *
 
-# int n, k;
-# vector<vector<int>> g;
-# vector<int> mt;
-# vector<bool> used;
-
-# bool try_kuhn(int v) {
-#     if (used[v])
-#         return false;
-#     used[v] = true;
-#     for (int to : g[v]) {
-#         if (mt[to] == -1 || try_kuhn(mt[to])) {
-#             mt[to] = v;
-#             return true;
-#         }
-#     }
-#     return false;
-# }
-
-# int main() {
-#     //... reading the graph ...
-
-#     mt.assign(k, -1);
-#     for (int v = 0; v < n; ++v) {
-#         used.assign(n, false);
-#         try_kuhn(v);
-#     }
-
-#     for (int i = 0; i < k; ++i)
-#         if (mt[i] != -1)
-#             printf("%d %d\n", mt[i] + 1, i + 1);
-# }
-
-# represents the course requirement as specified by the dept/prof
-class CourseRequirement: 
-    def __init__(self, id, attributes, requred_ta_count):
-        self.id = id
-        self.attributes = attributes
-        self.required_ta_count = requred_ta_count
-
 # Function to find an augmenting path in the matching graph
 # If it finds an augmenting path, then it should flip the edges in the path
 
@@ -96,7 +57,7 @@ def get_courses_and_edges(course_requirement_list, ta_list):
 
     for cr in course_requirement_list:  # [("170",'', 13). (50,"", 2)]
         for i in range(cr.required_ta_count):
-            new_course =Course(cr.id, cr.attributes, i + 1)
+            new_course = Course(cr.id + ' ' + str(i), cr.attributes, i + 1)
             courses.append(new_course)
             for ta in ta_list:
                 if cr.id in ta.pref_courses:
