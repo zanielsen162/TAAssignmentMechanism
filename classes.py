@@ -1,13 +1,17 @@
 class Course:
-    def __init__(self, id, attributes):
+    def __init__(self, id, attributes,  ta_req_nbr):
         self.id = id
         self.attributes = attributes
+        self.ta_req_nbr = ta_req_nbr
+
+    def key_str(self):
+        return f"Course={self.id}, Instance={self.ta_req_nbr}"
 
     def __hash__(self):
-        return hash(self.id)
+        return hash(self.id + str(self.ta_req_nbr))
 
     def __eq__(self, other):
-        return isinstance(other, Course) and self.id == other.id
+        return isinstance(other, Course) and self.id == other.id and self.ta_req_nbr == other.ta_req_nbr 
 
 class Applicant:
     def __init__(self, id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses):
@@ -19,14 +23,18 @@ class Applicant:
         self.prev_exp = prev_exp
         self.pref_courses = pref_courses
     
+    def key_str(self):
+        return f"TA={self.id}"
+    
     def __hash__(self):
         return hash(self.id)
 
     def __eq__(self, other):
         return isinstance(other, Applicant) and self.id == other.id
 
+
 class Edge:
-    def __init__(self, ta_app, course):
+    def __init__(self, ta_app, course: Course):
         self.ta = ta_app
         self.course = course
 
@@ -60,11 +68,13 @@ class MatchingGraph(Graph):
         print("-- Matches --")
         for key in self.curr_match.keys():
             if self.curr_match[key] != None:
-                print(key.id + " " + self.curr_match[key].id)
+                #print(key.id + " " + self.curr_match[key].id)
+                print(key.key_str() + " --matches-- " + self.curr_match[key].key_str())
         print("-- Unmatched --")
         for key in self.curr_match.keys():
             if self.curr_match[key] == None:
-                print(key.id)
+                #print(key.id)
+                print(key.key_str())
 
     def add_node(self, node):
         self.adj_list.update({node: []})
@@ -82,3 +92,11 @@ class MatchingGraph(Graph):
             if self.curr_match[course] is None:
                 return False
         return True
+
+
+# represents the course requirement as specified by the dept/prof
+class CourseRequirement: 
+    def __init__(self, id, attributes, requred_ta_count):
+        self.id = id
+        self.attributes = attributes
+        self.required_ta_count = requred_ta_count
