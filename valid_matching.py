@@ -89,8 +89,8 @@ ta_3 = Applicant("3", 3.6, True, ["CS 225", "CS 173"], ["Python", "Java"],  [], 
 # CourseRequirement - holds Course Information and number of TAs required for the course
 # Eventually, for every TA required an instance of this Course will be created 
 # Each instance of Course then qualifies as a node/vertex in the graph
-course_1 = CourseRequirement("CS 225", ["Python", "Java"], 2) # will result in 1 instance of Course object
-course_2 = CourseRequirement("CS 173", ["Python", "Java"], 4)  # will result in 3 instance of Course object
+course_1 = CourseRequirement("CS 225", ["Python", "Java"], 1) # will result in 1 instance of Course object
+course_2 = CourseRequirement("CS 173", ["Python", "Java"], 1)  # will result in 3 instance of Course object
 
 course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges ([course_1, course_2], [ta_1, ta_2, ta_3])
 #course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
@@ -105,4 +105,5 @@ final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
 try:
     final_graph.print_matches()
 except:
-    print(final_graph)
+    print(final_graph) 
+    
