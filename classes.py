@@ -12,7 +12,7 @@ class Course:
         return hash(self.id + str(self.ta_req_nbr))
 
     def __eq__(self, other):
-        return isinstance(other, Course) and self.id == other.id and self.ta_req_nbr == other.ta_req_nbr 
+        return isinstance(other, Course) and self.id == other.id # and self.ta_req_nbr == other.ta_req_nbr 
 
 class Applicant:
     def __init__(self, id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses):
@@ -81,6 +81,11 @@ class MatchingGraph(Graph):
         self.adj_list.update({node: []})
         self.curr_match.update({node: None})
         self.visited.update({node: False})
+        
+        if isinstance(node, Applicant):
+            self.tas.append(node)
+        if isinstance(node, Course):
+            self.courses.append(node)
 
     def check_phd_matched(self):
         for ta in self.tas:

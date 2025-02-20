@@ -42,13 +42,26 @@ def phds_matched_some_masters_graph():
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4, ta_5, ta_6, ta_7, ta_8, ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
     course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
+ 
     graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
     final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-    print(final_graph)
+
+def smaller_case():
+    ta_1 = Applicant("1", 3.9, True, ["Algorithms", "Problem Solving"], ["C++", "Java"], ["Teaching Assistant"], ["CMPSC 16", "CMPSC 24", "CMPSC 32", "CMPSC 40"])
+    ta_2 = Applicant("2", 4.0, True, ["Algorithms", "Data Structures"], ["Python", "Java"], ["Research Assistant"], ["CMPSC 16", "CMPSC 32", "CMPSC 40", "CMPSC 130A"])
+    ta_3 = Applicant("3", 3.7, True, ["Object-Oriented Design", "C++"], ["Java", "C++"], ["Teaching Assistant"], ["CMPSC 32", "CMPSC 40", "CMPSC 64", "CMPSC 130B"])
+    ta_4 = Applicant("4", 3.8, True, ["Compilers", "Computer Organization"], ["Assembly", "C"], ["Teaching Assistant"], ["CMPSC 40", "CMPSC 64", "CMPSC 130B", "CMPSC 130A"])
+    
+    ta_12 = Applicant("12", 3.9, False, ["Data Structures", "Algorithms"], ["C++", "Python"], ["Teaching Assistant"], ["CMPSC 130A", "CMPSC 130B", "CMPSC 16", "CMPSC 24"])
+    ta_13 = Applicant("13", 3.7, False, ["Compilers", "Computer Organization"], ["Assembly", "C"], ["Teaching Assistant"], ["CMPSC 40", "CMPSC 64", "CMPSC 130B", "CMPSC 130A"])
+
+    ta_list = [ta_1, ta_2, ta_3, ta_4, ta_12, ta_13]
+    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
+
+    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
+    # graph = matching(MatchingGraph(course_list, ta_list_incl_dummies, edge_list))
+    final_graph.print_matches()
+
 
 print("all phds some masters")
 phds_matched_some_masters_graph()
@@ -90,8 +103,8 @@ def every_filled():
     except:
         print(final_graph)
 
-print("every applicant matched, every course filled")
-every_filled()
+# print("every applicant matched, every course filled")
+# every_filled()
 
 #little phds and some masters, will have courses unmatched
 def little_phds_some_masters():
@@ -125,8 +138,8 @@ def little_phds_some_masters():
     except:
         print(final_graph)
 
-print("little phds and some masters")
-little_phds_some_masters()
+# print("little phds and some masters")
+# little_phds_some_masters()
 
 #no phds some masters
 def no_phds():
@@ -157,8 +170,8 @@ def no_phds():
     except:
         print(final_graph)
 
-print("no phds")
-no_phds()
+# print("no phds")
+# no_phds()
 
 #some phds not matched, only put down one preference for some phds so harder to match them
 def some_phds_not_matched():
@@ -195,8 +208,8 @@ def some_phds_not_matched():
     final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
     print(final_graph)
 
-print("some phds cant be matched")
-some_phds_not_matched()
+# print("some phds cant be matched")
+# some_phds_not_matched()
 
 #all the phds are matched, each course gets phds, no masters are matched
 def phds_no_masters_matched():
@@ -235,8 +248,8 @@ def phds_no_masters_matched():
     final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
     print(final_graph)
 
-print("phds matched no masters matched")
-phds_no_masters_matched()
+# print("phds matched no masters matched")
+# phds_no_masters_matched()
 
 
 #no valid matching is always appearing 
