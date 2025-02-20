@@ -83,8 +83,8 @@ def get_courses_and_edges(course_requirement_list, ta_list):
         
 
 ta_1 = Applicant("1", 3.5, True, ["CS 225", "CS 173", "CS173"], ["Python", "Java"], ["CS 173"], ["CS 225", "CS 173"])
-ta_2 = Applicant("2", 3.8, True, ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
-ta_3 = Applicant("3", 3.6, True, ["CS 225", "CS 173"], ["Python", "Java"],  [], ["CS 225", "CS 173"])
+ta_2 = Applicant("2", 3.8, False, ["CS 225", "CS 173"], ["Python", "Java"],  ["CS 225"], ["CS 225", "CS 173"])
+ta_3 = Applicant("3", 3.6, False, ["CS 225", "CS 173"], ["Python", "Java"],  [], ["CS 225", "CS 173"])
 
 # CourseRequirement - holds Course Information and number of TAs required for the course
 # Eventually, for every TA required an instance of this Course will be created 
