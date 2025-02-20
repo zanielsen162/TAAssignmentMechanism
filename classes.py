@@ -84,7 +84,7 @@ class MatchingGraph(Graph):
 
     def check_phd_matched(self):
         for ta in self.tas:
-            if self.curr_match[ta].class_level and self.curr_match[ta] is None:
+            if self.ta.class_level and self.curr_match[ta] is None:
                 return False
         return True
     
