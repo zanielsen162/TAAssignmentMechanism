@@ -1,10 +1,14 @@
 
 class Course:
-    def __init__(self, id, attributes,  ta_req_nbr):
+    def __init__(self, id, attributes,  ta_req_nbr, pref_tas =[]):
         self.id = id
         self.attributes = attributes
         self.ta_req_nbr = ta_req_nbr
+        self.pref_tas = pref_tas
 
+    def unique_id(self):
+        return str(self.id) + "-" + str(self.ta_req_nbr)
+    
     def key_str(self):
         return f"Course={self.id}, Instance={self.ta_req_nbr}"
 
@@ -24,6 +28,9 @@ class Applicant:
         self.prev_exp = prev_exp
         self.pref_courses = pref_courses
     
+    def unique_id(self):
+        return str(self.id)
+    
     def key_str(self):
         return f"TA={self.id}"
     
@@ -38,6 +45,12 @@ class Edge:
     def __init__(self, ta_app, course: Course):
         self.ta = ta_app
         self.course = course
+    
+    def edge_course(self):
+        return self.course
+    
+    def edge_ta(self):
+        return self.ta
 
 class Graph:
     def __init__(self, courses, tas, edges):
