@@ -51,6 +51,12 @@ class Edge:
     
     def edge_ta(self):
         return self.ta
+    
+    def __hash__(self):
+        return hash(self.ta.id + self.course.id)
+
+    def __eq__(self, other):
+        return isinstance(other, Edge) and self.ta == other.ta and self.course == other.course
 
 class Graph:
     def __init__(self, courses, tas, edges):
