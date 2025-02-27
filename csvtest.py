@@ -3,7 +3,7 @@
 #course needs 3 TA, provided 7 preference
 #course needs 4 TA, provided 9 preferences
 #edge if the course preferred a TA and a higher ranking is assigned if the course was also in TA preferenes
-
+#in applicants TAs 1-40 are PHD
 import pandas as pd
 from classes import Course, Applicant, Edge
 
