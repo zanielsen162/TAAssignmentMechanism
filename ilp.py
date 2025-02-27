@@ -12,23 +12,56 @@ from classes import *
 # Output:
 #   solution of the optimization problem
 
-course_a = Course('a', [], 2, []) 
-course_b = Course('b', [], 1, [])
+# Read CSV files
+import pandas as pd
+from classes import Course, Applicant, Edge
 
-ta_1 = Applicant('1', 4.0, True, [], [], [], [])
-ta_2 = Applicant('2', 3.0, True, [], [], [], [])
-ta_3 = Applicant('3', 2.0, False, [], [], [], []) 
+# Read CSV files
+courses_df = pd.read_csv('course test - courses.csv')
+applicants_df = pd.read_csv('course test - applicants.csv')
+rankings_df = pd.read_csv('course test - ranking.csv')
 
-courses = [course_a, course_b]
-tas = [ta_1, ta_2, ta_3]
+# Create Course objects
+courses = []
+for _, row in courses_df.iterrows():
+    course_id = row['course']
+    skills = row['skills'].split(',') if pd.notna(row['skills']) else []
+    ta_req_nbr = row['TAs_req']
+    preferred_tas = row['pref'].split(',') if pd.notna(row['pref']) else []
+    courses.append(Course(course_id, skills, ta_req_nbr, preferred_tas))
+
+# Create Applicant objects
+tas = []
+for _, row in applicants_df.iterrows():
+    ta_id = row['id']
+    gpa = row['gpa']
+    class_level = row['class']
+    courses_taken = row['courses_taken'].split(',') if pd.notna(row['courses_taken']) else []
+    skills = row['skills'].split(',') if pd.notna(row['skills']) else []
+    prev_exp = row['prev_exp'].split(',') if pd.notna(row['prev_exp']) else []
+    pref_courses = row['pref_courses'].split(',') if pd.notna(row['pref_courses']) else []
+    tas.append(Applicant(ta_id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses))
+
+# Create rankings dictionary
+rankings = {}
+for _, row in rankings_df.iterrows():
+    course_id = row['course']
+    ta_id = row['ta']
+    ranking = row['ranking']
+
+    # Find the corresponding Course and Applicant objects
+    course = next((c for c in courses if c.id == course_id), None)
+    ta = next((t for t in tas if t.id == ta_id), None)
+
+    if course and ta:
+        edge = Edge(ta, course)
+        if course not in rankings:
+            rankings[course] = []
+        rankings[course].append((edge, ranking))
+
+# Create edges (all possible TA-course pairs)
 edges = [Edge(ta, course) for course in courses for ta in tas]
 
-rankings = {
-    course_a: [(Edge(ta_1, course_a), 2), (Edge(ta_2, course_a), 1), (Edge(ta_3, course_a), 2)],
-    course_b: [(Edge(ta_1, course_b), 1), (Edge(ta_2, course_b), 0), (Edge(ta_3, course_b), 1)]
-} # dictionary where keys are courses and the values are lists of tuples (edge, ranking)
-
-# have rankings be a list of tuples (TA, ranking)
 def evaluation_function(course, rankings, vars):
     course_rankings = rankings[course]
     rankings = sorted(course_rankings,key=lambda x: x[1], reverse=True)
@@ -48,7 +81,7 @@ def eval_general(course, rankings, tas):
 
     return value
 
-print(eval_general(course_a, {ta_2: 0, ta_3: 1}, [ta_2, ta_3]))
+#print(eval_general(course_a, {ta_2: 0, ta_3: 1}, [ta_2, ta_3]))
 
 def build_model(courses, rankings, edges):
     model = gp.Model("course_allocation")
@@ -79,3 +112,32 @@ model.optimize()
 #     print(v.varName, v.x)
 
 # print('Optimal objective function value', model.objVal)
+if model.status == GRB.OPTIMAL:
+    print("Final Matchings:")
+    for edge, var in edge_vars.items():
+        if var.X > 0.5:  # Check if the variable is set to 1 (assigned)
+            print(f"TA {edge.ta.id} is assigned to Course {edge.course.id}")
+    print('Optimal objective function value:', model.objVal)
+else:
+    print("No optimal solution found.")
+
+final_matchings = []
+for edge, var in edge_vars.items():
+    if var.X > 0.5:  # Check if the variable is set to 1 (assigned)
+        final_matchings.append((edge.ta.id, edge.course.id))
+
+# Define the range of TAs to check (TA_1 to TA_40)
+tas_to_check = [f"TA_{i}" for i in range(1, 66)]
+
+# Check which TAs in the range are matched
+matched_tas = [ta for ta, course in final_matchings if ta in tas_to_check]
+unmatched_tas = [ta for ta in tas_to_check if ta not in matched_tas]
+
+# Print results
+print("Matched TAs (TA_1 to TA_65):")
+for ta in matched_tas:
+    print(ta)
+
+print("\nUnmatched TAs (TA_1 to TA_65):")
+for ta in unmatched_tas:
+    print(ta)
