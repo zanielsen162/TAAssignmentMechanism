@@ -13,10 +13,6 @@ from classes import *
 #   solution of the optimization problem
 
 # Read CSV files
-import pandas as pd
-from classes import Course, Applicant, Edge
-
-# Read CSV files
 courses_df = pd.read_csv('course test - courses.csv')
 applicants_df = pd.read_csv('course test - applicants.csv')
 rankings_df = pd.read_csv('course test - ranking.csv')
