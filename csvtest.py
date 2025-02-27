@@ -5,7 +5,8 @@
 #edge if the course preferred a TA and a higher ranking is assigned if the course was also in TA preferenes
 #in applicants TAs 1-40 are PHD
 import pandas as pd
-from classes import Course, Applicant, Edge
+from classes import *
+from valid_matching import *
 
 # Read CSV files
 courses_df = pd.read_csv('course test - courses.csv')
@@ -33,6 +34,21 @@ for _, row in applicants_df.iterrows():
     pref_courses = row['pref_courses'].split(',') if pd.notna(row['pref_courses']) else []
     tas.append(Applicant(ta_id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses))
 
+# Create edges (all possible TA-course pairs)
+edges = []
+for course in courses:
+    preferred_tas = course.pref_tas  # List of preferred TA IDs for this course
+    for ta in tas:
+        if ta.id in preferred_tas:  # Only create an edge if the TA is preferred by the course
+            edges.append(Edge(ta, course))
+
+print("All Edges:")
+for edge in edges:
+    print(f"TA {edge.ta.id} -> Course {edge.course.id}")
+
+# Create a mapping of (ta.id, course.id) to Edge objects
+edge_map = {(edge.ta.id, edge.course.id): edge for edge in edges}
+
 # Create rankings dictionary
 rankings = {}
 for _, row in rankings_df.iterrows():
@@ -40,22 +56,36 @@ for _, row in rankings_df.iterrows():
     ta_id = row['ta']
     ranking = row['ranking']
 
-    # Find the corresponding Course and Applicant objects
-    course = next((c for c in courses if c.id == course_id), None)
-    ta = next((t for t in tas if t.id == ta_id), None)
+    # Find the corresponding Edge object using the mapping
+    edge = edge_map.get((ta_id, course_id))
+    if edge:
+        if edge.course not in rankings:
+            rankings[edge.course] = []
+        rankings[edge.course].append((edge, ranking))
 
-    if course and ta:
-        edge = Edge(ta, course)
-        if course not in rankings:
-            rankings[course] = []
-        rankings[course].append((edge, ranking))
+print("\nRankings:")
+for course, ranked_edges in rankings.items():
+    print(f"Course {course.id}:")
+    for edge, rank in sorted(ranked_edges, key=lambda x: x[1]):  # Sorting by ranking
+        print(f"  TA {edge.ta.id} -> Rank {rank}")
 
-# Print rankings with ranking number and edge
-print("Rankings:")
-for course, ranking_list in rankings.items():
-    print(f"Course: {course.id}")
-    for edge, ranking in ranking_list:
-        print(f"  TA: {edge.ta.id}, Ranking: {ranking}")
+# Print the number of edges created
+print(f"Number of edges: {len(edges)}")
 
-# Create edges (all possible TA-course pairs)
-edges = [Edge(ta, course) for course in courses for ta in tas]
+
+
+course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges (courses, tas)
+#course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
+#print ('course list', [x for x in course_list])
+#print ('edge list', edge_list)
+graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
+matching(graph)
+graph.print_matches()
+print('---')
+final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
+
+try:
+    final_graph.print_matches()
+except:
+    print(final_graph) 
+    
