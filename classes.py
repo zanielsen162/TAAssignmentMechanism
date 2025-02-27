@@ -5,6 +5,7 @@ class Course:
         self.attributes = attributes
         self.ta_req_nbr = ta_req_nbr
         self.pref_tas = pref_tas
+        self.parent = None
 
     def unique_id(self):
         return str(self.id) + "-" + str(self.ta_req_nbr)
@@ -27,6 +28,7 @@ class Applicant:
         self.skills = skills
         self.prev_exp = prev_exp
         self.pref_courses = pref_courses
+        self.parent = None
     
     def unique_id(self):
         return str(self.id)
@@ -77,6 +79,7 @@ class MatchingGraph(Graph):
         super().__init__(courses, tas, edges)
         self.curr_match = dict.fromkeys(self.adj_list.keys(), None)
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
+
     
     def print_matches(self):
         print("-- Matches --")
