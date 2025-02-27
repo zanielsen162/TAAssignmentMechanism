@@ -106,6 +106,7 @@ def get_processed_data(course_requirement_list, ta_list):
     courses = []
     edges = []
     
+    
     for cr in course_requirement_list:  # [("170",'', 13). (50,"", 2)]
         for i in range(cr.required_ta_count):
             new_course =Course(cr.id, cr.attributes, i + 1)
@@ -114,45 +115,64 @@ def get_processed_data(course_requirement_list, ta_list):
                 if cr.id in ta.pref_courses and ta.id in cr.pref_tas:
                     edges.append(Edge(ta, new_course))
 
-def flip_edges(graph, v, first_node = False):
-    iter_v = v 
-    while first_node or hasattr(iter_v, 'parent') and iter_v.parent is not None: 
-        if graph.curr_match[iter_v.parent] != iter_v:
-            graph.curr_match[iter_v.parent] = iter_v
-            graph.curr_match[iter_v] = iter_v.parent
-        iter_v = iter_v.parent
+def flip_edges(graph, v):
+    iter_v = v
+    while iter_v in graph.parent_map:
+        p = graph.parent_map[iter_v]
+        graph.curr_match[p], graph.curr_match[iter_v] = iter_v, p
+        iter_v = p  
 
-def try_augmenting_path_bfs(graph, v):
-    queue = [v]
-    graph.visited[v] = True
-    first_node = True
+
+def try_augmenting_path_bfs(graph, start_ta):
+    queue = [start_ta]
+    graph.visited[start_ta] = True
+    graph.parent_map = {}
+
     while queue:
         u = queue.pop(0)
-        if u in graph.courses:
-            if graph.curr_match[u] is not None:
+
+        if u in graph.courses:  
+            if graph.curr_match.get(u) is not None:
                 w = graph.curr_match[u]
-                if not graph.visited[w]:
+                if not graph.visited.get(w, False):
                     graph.visited[w] = True
                     queue.append(w)
-                    w.parent = u
-            else:
-                flip_edges(graph, u, first_node)
-                first_node = False
+                    graph.parent_map[w] = u 
+            else: 
+                flip_edges(graph, u)
                 return True
 
-        elif u in graph.tas:
-            if graph.curr_match[u] is not None:
+        elif u in graph.tas: 
+            if graph.curr_match.get(u) is not None:
                 for w in graph.adj_list[u]:
-                    if w not in graph.curr_match[u] and not graph.visited[w]:
+                    if graph.curr_match.get(u) != w and not graph.visited.get(w, False):
                         graph.visited[w] = True
                         queue.append(w)
-            else:
+            else:  
                 for w in graph.adj_list[u]:
-                    if not graph.visited[w]:
+                    if not graph.visited.get(w, False):
                         graph.visited[w] = True
                         queue.append(w)
-                        w.parent = u
-    return graph
+                        graph.parent_map[w] = u 
+
+    return False 
+
+
+def find_maximum_matching(graph):
+    while True:
+        graph.visited = {}
+        found_augmenting_path = False
+
+        for ta in graph.tas:
+            if graph.curr_match.get(ta) is None: 
+                if try_augmenting_path_bfs(graph, ta):
+                    found_augmenting_path = True
+                    break 
+
+        if not found_augmenting_path:
+            break 
+
+    return graph.curr_match 
 
 
 
