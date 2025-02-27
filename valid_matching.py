@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from classes import *
+import queue
 
 # Function to find an augmenting path in the matching graph
 # If it finds an augmenting path, then it should flip the edges in the path
@@ -36,6 +37,7 @@ def complete_matching(applicant_list, course_list, edge_list):
     #-------------masters applicants -----------------
     masters_applicant_list = [student for student in applicant_list if student.class_level is False]
     masters_edge_list = [edge for edge in edge_list if edge.ta.class_level is False]
+
 
     for student in masters_applicant_list: 
         final_graph.add_node(student)
@@ -98,7 +100,61 @@ def get_courses_and_edges(course_requirement_list, ta_list):
         '''
 
     return courses, edges, ta_list # + dummy_ta_list        
-        
+
+
+def get_processed_data(course_requirement_list, ta_list):
+    courses = []
+    edges = []
+    
+    for cr in course_requirement_list:  # [("170",'', 13). (50,"", 2)]
+        for i in range(cr.required_ta_count):
+            new_course =Course(cr.id, cr.attributes, i + 1)
+            courses.append(new_course)
+            for ta in ta_list:
+                if cr.id in ta.pref_courses and ta.id in cr.pref_tas:
+                    edges.append(Edge(ta, new_course))
+
+def flip_edges(graph, v, first_node = False):
+    iter_v = v 
+    while first_node or hasattr(iter_v, 'parent') and iter_v.parent is not None: 
+        if graph.curr_match[iter_v.parent] != iter_v:
+            graph.curr_match[iter_v.parent] = iter_v
+            graph.curr_match[iter_v] = iter_v.parent
+        iter_v = iter_v.parent
+
+def try_augmenting_path_bfs(graph, v):
+    queue = [v]
+    graph.visited[v] = True
+    first_node = True
+    while queue:
+        u = queue.pop(0)
+        if u in graph.courses:
+            if graph.curr_match[u] is not None:
+                w = graph.curr_match[u]
+                if not graph.visited[w]:
+                    graph.visited[w] = True
+                    queue.append(w)
+                    w.parent = u
+            else:
+                flip_edges(graph, u, first_node)
+                first_node = False
+                return True
+
+        elif u in graph.tas:
+            if graph.curr_match[u] is not None:
+                for w in graph.adj_list[u]:
+                    if w not in graph.curr_match[u] and not graph.visited[w]:
+                        graph.visited[w] = True
+                        queue.append(w)
+            else:
+                for w in graph.adj_list[u]:
+                    if not graph.visited[w]:
+                        graph.visited[w] = True
+                        queue.append(w)
+                        w.parent = u
+    return graph
+
+
 
 
 
@@ -118,6 +174,8 @@ def get_courses_and_edges(course_requirement_list, ta_list):
 #course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
 #print ('course list', [x for x in course_list])
 #print ('edge list', edge_list)
+
+
 
 # graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
 # matching(graph)
