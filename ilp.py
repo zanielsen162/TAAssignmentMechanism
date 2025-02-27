@@ -126,7 +126,7 @@ for edge, var in edge_vars.items():
     if var.X > 0.5:  # Check if the variable is set to 1 (assigned)
         final_matchings.append((edge.ta.id, edge.course.id))
 
-# Define the range of TAs to check (TA_1 to TA_40)
+# Define the range of TAs to check (TA_1 to TA_..)
 tas_to_check = [f"TA_{i}" for i in range(1, 66)]
 
 # Check which TAs in the range are matched

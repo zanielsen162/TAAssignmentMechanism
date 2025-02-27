@@ -59,8 +59,3 @@ for course, ranking_list in rankings.items():
 
 # Create edges (all possible TA-course pairs)
 edges = [Edge(ta, course) for course in courses for ta in tas]
-
-# Now you can use the `courses`, `tas`, `rankings`, and `edges` in your ILP code
-# For example:
-# model, edge_vars = build_model(courses, rankings, edges)
-# model.optimize()
