@@ -9,9 +9,9 @@ from classes import *
 from valid_matching import *
 
 # Read CSV files
-courses_df = pd.read_csv('course test - courses.csv')
-applicants_df = pd.read_csv('course test - applicants.csv')
-rankings_df = pd.read_csv('course test - ranking.csv')
+courses_df = pd.read_csv('test2c.csv')
+applicants_df = pd.read_csv('test2a.csv')
+rankings_df = pd.read_csv('test2r.csv')
 
 # Create Course objects
 courses = []
@@ -73,19 +73,3 @@ for course, ranked_edges in rankings.items():
 print(f"Number of edges: {len(edges)}")
 
 
-
-course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges (courses, tas)
-#course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
-#print ('course list', [x for x in course_list])
-#print ('edge list', edge_list)
-graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-matching(graph)
-graph.print_matches()
-print('---')
-final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-
-try:
-    final_graph.print_matches()
-except:
-    print(final_graph) 
-    

@@ -62,3 +62,4 @@ def print_output(model, edge_vars, tas):
         unmatched_tas = [ ta for ta in tas if ta not in matched_tas ]
     else:
         print("No optimal solution found.")
+       
