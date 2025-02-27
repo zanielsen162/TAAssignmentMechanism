@@ -55,9 +55,9 @@ def build_model(courses, rankings, edges):
 
     return model, edge_vars
 
-courses_df = pd.read_csv('test2c.csv')
-applicants_df = pd.read_csv('test2a.csv')
-rankings_df = pd.read_csv('test2r.csv')
+courses_df = pd.read_csv('test1c.csv')
+applicants_df = pd.read_csv('test1a.csv')
+rankings_df = pd.read_csv('test1r.csv')
 
 courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
 

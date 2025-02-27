@@ -1,5 +1,6 @@
 from classes import *
 from valid_matching import *
+from ilptesting import *
 
 
 #example classes and number of required TAs
@@ -242,3 +243,22 @@ phds_no_masters_matched()
 #no valid matching is always appearing 
 #if all phds are matched and the masters can now get matched...still provides 'no valid matching'
 #if every course is filled with phds we dont get the 'no valid matching'
+
+print("teststastuduyasdgua")
+
+courses_df = pd.read_csv('test2c.csv')
+applicants_df = pd.read_csv('test2a.csv')
+rankings_df = pd.read_csv('test2r.csv')
+courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
+
+
+
+course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges (courses, tas)
+#course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
+#print ('course list', [x for x in course_list])
+#print ('edge list', edge_list)
+graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
+matching(graph)
+graph.print_matches()
+print('---')
+final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
