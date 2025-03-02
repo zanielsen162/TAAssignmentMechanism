@@ -28,7 +28,7 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     final_graph = MatchingGraph(course_list, phd_applicant_list, edge_list_temp)
     
-    final_graph = matching(final_graph)
+    final_graph = find_maximum_matching(final_graph)
     
     if not final_graph.check_phd_matched():
         print('No valid matching, phd')
@@ -109,7 +109,7 @@ def get_processed_data(course_requirement_list, ta_list):
     
     for cr in course_requirement_list:  # [("170",'', 13). (50,"", 2)]
         for i in range(cr.required_ta_count):
-            new_course =Course(cr.id, cr.attributes, i + 1)
+            new_course = Course(cr.id, cr.attributes, i + 1)
             courses.append(new_course)
             for ta in ta_list:
                 if cr.id in ta.pref_courses and ta.id in cr.pref_tas:
@@ -159,20 +159,16 @@ def try_augmenting_path_bfs(graph, start_ta):
 
 
 def find_maximum_matching(graph):
-    while True:
-        graph.visited = {}
+    found_augmenting_path = True
+    while found_augmenting_path is True:
         found_augmenting_path = False
 
         for ta in graph.tas:
             if graph.curr_match.get(ta) is None: 
                 if try_augmenting_path_bfs(graph, ta):
                     found_augmenting_path = True
-                    break 
 
-        if not found_augmenting_path:
-            break 
-
-    return graph.curr_match 
+    return graph
 
 
 
