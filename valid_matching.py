@@ -125,6 +125,7 @@ def flip_edges(graph, v):
 
 def try_augmenting_path_bfs(graph, start_ta):
     queue = [start_ta]
+    graph.reset_visited()
     graph.visited[start_ta] = True
     graph.parent_map = {}
 
