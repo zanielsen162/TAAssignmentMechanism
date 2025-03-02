@@ -5,7 +5,6 @@ class Course:
         self.attributes = attributes
         self.ta_req_nbr = ta_req_nbr
         self.pref_tas = pref_tas
-        self.parent = None
 
     def unique_id(self):
         return str(self.id) + "-" + str(self.ta_req_nbr)
@@ -28,7 +27,6 @@ class Applicant:
         self.skills = skills
         self.prev_exp = prev_exp
         self.pref_courses = pref_courses
-        self.parent = None
     
     def unique_id(self):
         return str(self.id)
