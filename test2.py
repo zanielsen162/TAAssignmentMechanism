@@ -96,16 +96,15 @@ def every_filled():
     return ta_list
     course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
     
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
+    #graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
+    #graph.print_matches()
+    #print('---')
+    #final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
 
-    try:
-        final_graph.print_matches()
-    except:
-        print(final_graph)
+    #try:
+    #    final_graph.print_matches()
+    #except:
+    #    print(final_graph)
 
 # print("every applicant matched, every course filled")
 # every_filled()
@@ -130,18 +129,18 @@ def little_phds_some_masters():
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4,ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
     return ta_list
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
+    #course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
     
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
+    #graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
+    #matching(graph)
+    #graph.print_matches()
+    #print('---')
+    #final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
 
-    try:
-        final_graph.print_matches()
-    except:
-        print(final_graph)
+    #try:
+    #    final_graph.print_matches()
+    #except:
+    #    print(final_graph)
 
 # print("little phds and some masters")
 # little_phds_some_masters()
@@ -258,7 +257,7 @@ def phds_no_masters_matched():
 
 
 if __name__ == '__main__':
-    selected = 5
+    selected = 7
     if selected == 1:
         ta_list = phds_matched_some_masters_graph()
     elif selected == 2:
@@ -275,6 +274,7 @@ if __name__ == '__main__':
         ta_list = phds_no_masters_matched()
     else:
         ta_list = phds_matched_some_masters_graph()
+        
     course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
     graph = MatchingGraph( course_list, ta_list_incl_dummies, edge_list)
     matched_graph = find_maximum_matching(graph)
