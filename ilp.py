@@ -71,7 +71,7 @@ def build_model_min_var(courses, rankings, edges, threshold):
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if not ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.course == course) == course.ta_req_nbr for course in courses)
     model.addConstrs(edge_vars[edge1] - edge_vars[edge2] < threshold for edge1 in edge_vars for edge2 in edge_vars)
-    
+    model.addConstrs(gp.quicksum(evaluation_function(course, rankings, edge_vars) for course in courses) - edge_vars[edge] <= threshold for edge in edges)
     model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]), GRB.MAXIMIZE)
 
     return model, edge_vars
