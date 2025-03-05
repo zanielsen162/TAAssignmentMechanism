@@ -2,25 +2,6 @@ from collections.abc import Iterable
 from classes import *
 import queue
 
-# Function to find an augmenting path in the matching graph
-# If it finds an augmenting path, then it should flip the edges in the path
-def try_augmenting_path(graph, node):
-    if (graph.visited[node]):
-        return False
-    graph.visited[node] = True
-    for visit in graph.adj_list[node]:
-        if graph.curr_match[visit] is None or try_augmenting_path(graph, graph.curr_match[visit]):
-            graph.curr_match[visit] = node
-            graph.curr_match[node] = visit
-            return True
-    return False
-
-def matching(graph):
-    for val in graph.courses:
-        graph.visited = dict.fromkeys(graph.visited.keys(), False)
-        try_augmenting_path(graph, val)
-    return graph
-
 def complete_matching(applicant_list, course_list, edge_list):
     #--------- phd applicants----------------
     phd_applicant_list = [student for student in applicant_list if student.class_level]
@@ -28,6 +9,7 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     final_graph = MatchingGraph(course_list, phd_applicant_list, edge_list_temp)
     
+    print('Running PhD...')
     final_graph = find_maximum_matching(final_graph)
     
     if not final_graph.check_phd_matched():
@@ -45,24 +27,11 @@ def complete_matching(applicant_list, course_list, edge_list):
     for edge in masters_edge_list: 
         final_graph.add_edge(edge)
 
-    for edge in final_graph.adj_list.keys():
-        print(edge.id, ':')
-        for val in final_graph.adj_list[edge]:
-            print('     ',val.id)
-
     final_graph.visited = dict.fromkeys(final_graph.visited.keys(), False)
 
-    comp_graph = MatchingGraph(course_list, applicant_list, edge_list)
     
-    print('adj_list same?', comp_graph.adj_list == final_graph.adj_list)
-    print('curr_match same?', comp_graph.curr_match == final_graph.curr_match)
-    print('curr_match keys same?', comp_graph.curr_match.keys() == final_graph.curr_match.keys())
-    print('visited same?', comp_graph.visited == final_graph.visited) # visited should be the same
-
-    print('---POST MASTERS---')
-    final_graph = matching(final_graph)
-    final_graph.print_matches()
-    print('-------------------')
+    print('Running masters...')
+    final_graph = find_maximum_matching(final_graph)
 
     
     if not final_graph.check_courses_matched():
@@ -70,6 +39,9 @@ def complete_matching(applicant_list, course_list, edge_list):
         return None
 
     return final_graph
+
+
+
 
 def get_courses_and_edges(course_requirement_list, ta_list):
     courses = []
@@ -88,18 +60,7 @@ def get_courses_and_edges(course_requirement_list, ta_list):
         for i in range(len(courses) - len(ta_list)):
             dummy_ta_list.append(Applicant("dummy" + str(i), 1, True, [], [], [], []))
 
-
-    '''
-    print ("Courses")
-    for x in courses:
-        print ((x.id, x.ta_req_nbr))
-        
-    print("Edges")
-    for y in edges:
-        print(y.ta.id, y.ta.courses_taken, y.course.id, y.course.ta_req_nbr)
-        '''
-
-    return courses, edges, ta_list # + dummy_ta_list        
+    return courses, edges, ta_list
 
 
 def get_processed_data(course_requirement_list, ta_list):
@@ -116,11 +77,13 @@ def get_processed_data(course_requirement_list, ta_list):
                     edges.append(Edge(ta, new_course))
 
 def flip_edges(graph, v):
+    # print('called flip', v.id)
     iter_v = v
     while iter_v in graph.parent_map:
         p = graph.parent_map[iter_v]
+        # print(p.id, 'is updated to', iter_v.id, 'and', iter_v.id, 'is updated to', p.id)
         graph.curr_match[p], graph.curr_match[iter_v] = iter_v, p
-        iter_v = p  
+        iter_v = p
 
 
 def try_augmenting_path_bfs(graph, start_ta):
@@ -131,6 +94,7 @@ def try_augmenting_path_bfs(graph, start_ta):
 
     while queue:
         u = queue.pop(0)
+        # print(u.id)
 
         if u in graph.courses:  
             if graph.curr_match.get(u) is not None:
@@ -148,6 +112,7 @@ def try_augmenting_path_bfs(graph, start_ta):
                 for w in graph.adj_list[u]:
                     if graph.curr_match.get(u) != w and not graph.visited.get(w, False):
                         graph.visited[w] = True
+                        graph.parent_map[w] = u
                         queue.append(w)
             else:  
                 for w in graph.adj_list[u]:
@@ -167,6 +132,7 @@ def find_maximum_matching(graph):
         for ta in graph.tas:
             if graph.curr_match.get(ta) is None: 
                 if try_augmenting_path_bfs(graph, ta):
+                    # print('called again at', ta.id)
                     found_augmenting_path = True
 
     return graph
