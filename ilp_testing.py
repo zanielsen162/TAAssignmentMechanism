@@ -43,8 +43,7 @@ def format_dfs(courses_df, applicants_df, rankings_df):
             rankings[course].append((edge, ranking))
 
     # Create edges (all possible TA-course pairs)
-    edges = [Edge(ta, course) for course in courses for ta in tas]
-
+    edges = [Edge(ta, course) for course in courses for ta in tas if ta.id in course.pref_tas]
     return courses, tas, rankings, edges
 
 def print_output(model, edge_vars, tas):

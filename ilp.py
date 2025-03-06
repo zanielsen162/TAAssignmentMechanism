@@ -17,6 +17,7 @@ from ilp_testing import *
 def evaluation_function(course, rankings, vars):
     course_rankings = rankings[course]
     rankings = sorted(course_rankings,key=lambda x: x[1], reverse=True)
+    
     B = rankings[course.ta_req_nbr-1][1]
 
     denominator = (course.ta_req_nbr * max([np.abs(x[1] - B) for x in rankings])) if (course.ta_req_nbr * max([np.abs(x[1] - B) for x in rankings])) != 0 else course.ta_req_nbr
@@ -68,15 +69,15 @@ def build_model_min_var(courses, rankings, edges, threshold):
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if not ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.course == course) == course.ta_req_nbr for course in courses)
 
-    model.addConstrs(gp.quicksum(evaluation_function(course, rankings, edge_vars) for course in courses) - edge_vars[edge] <= threshold for edge in edges)
-    model.addConstrs(edge_vars[edge] - gp.quicksum(evaluation_function(course, rankings, edge_vars) for course in courses) <= threshold for edge in edges)
+    model.addConstrs(gp.quicksum([evaluation_function(course, rankings, edge_vars) for course in courses]) - edge_vars[edge] <= threshold for edge in edges)
+    model.addConstrs(edge_vars[edge] - gp.quicksum([evaluation_function(course, rankings, edge_vars) for course in courses]) <= threshold for edge in edges)
     model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]), GRB.MAXIMIZE)
 
     return model, edge_vars
 
-courses_df = pd.read_csv('course test - courses.csv')
-applicants_df = pd.read_csv('course test - applicants.csv')
-rankings_df = pd.read_csv('course test - ranking.csv')
+courses_df = pd.read_csv('testing/course test - courses.csv')
+applicants_df = pd.read_csv('testing/course test - applicants.csv')
+rankings_df = pd.read_csv('testing/course test - ranking.csv')
 
 courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
 
