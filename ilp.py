@@ -42,16 +42,16 @@ def build_model(courses, rankings, edges):
     for edge in edges:
         edge_vars[edge] = model.addVar(vtype=GRB.BINARY, name=f'assign_{edge.course.id}_{edge.ta.id}')
 
-    m = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='m')
-    M = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='M')
+    # m = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='m')
+    # M = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='M')
         
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) == 1 for ta in tas if ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if not ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.course == course) == course.ta_req_nbr for course in courses)
-    model.addConstrs(m <= evaluation_function(course, rankings, edge_vars) for course in courses)
-    model.addConstrs(M >= evaluation_function(course, rankings, edge_vars) for course in courses)
+    # model.addConstrs(m <= evaluation_function(course, rankings, edge_vars) for course in courses)
+    # model.addConstrs(M >= evaluation_function(course, rankings, edge_vars) for course in courses)
 
-    model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]) - (M - m), GRB.MAXIMIZE)
+    model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]), GRB.MAXIMIZE)
 
     return model, edge_vars
 
@@ -63,15 +63,13 @@ def build_model_min_var(courses, rankings, edges, threshold):
     edge_vars = {}
     for edge in edges:
         edge_vars[edge] = model.addVar(vtype=GRB.BINARY, name=f'assign_{edge.course.id}_{edge.ta.id}')
-
-    m = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='m')
-    M = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='M')
         
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) == 1 for ta in tas if ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if not ta.class_level)
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.course == course) == course.ta_req_nbr for course in courses)
-    model.addConstrs(edge_vars[edge1] - edge_vars[edge2] < threshold for edge1 in edge_vars for edge2 in edge_vars)
+
     model.addConstrs(gp.quicksum(evaluation_function(course, rankings, edge_vars) for course in courses) - edge_vars[edge] <= threshold for edge in edges)
+    model.addConstrs(edge_vars[edge] - gp.quicksum(evaluation_function(course, rankings, edge_vars) for course in courses) <= threshold for edge in edges)
     model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]), GRB.MAXIMIZE)
 
     return model, edge_vars
@@ -82,7 +80,10 @@ rankings_df = pd.read_csv('course test - ranking.csv')
 
 courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
 
+model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8)
+model.optimize()
+print_output(model, edge_vars, tas)
+print('----')
 model, edge_vars = build_model(courses, rankings, edges)
 model.optimize()
-
 print_output(model, edge_vars, tas)
