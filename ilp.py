@@ -3,7 +3,7 @@ from gurobipy import GRB
 import numpy as np
 import pandas as pd
 from classes import *
-from ilp_testing import *
+from loading_data_ilp import *
 
 # Construct the model
 # Input: 
@@ -74,16 +74,19 @@ def build_model_min_var(courses, rankings, edges, threshold):
 
     return model, edge_vars
 
-courses_df = pd.read_csv('course test - courses.csv')
-applicants_df = pd.read_csv('course test - applicants.csv')
-rankings_df = pd.read_csv('course test - ranking.csv')
 
-courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
+# Sample of how to run
+#
+# # courses_df = pd.read_csv('course test - courses.csv')
+# # applicants_df = pd.read_csv('course test - applicants.csv')
+# # rankings_df = pd.read_csv('course test - ranking.csv')
 
-model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8)
-model.optimize()
-print_output(model, edge_vars, tas)
-print('----')
-model, edge_vars = build_model(courses, rankings, edges)
-model.optimize()
-print_output(model, edge_vars, tas)
+# # courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
+
+# # model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8)
+# # model.optimize()
+# # print_output(model, edge_vars, tas)
+# # print('----')
+# # model, edge_vars = build_model(courses, rankings, edges)
+# # model.optimize()
+# # print_output(model, edge_vars, tas)

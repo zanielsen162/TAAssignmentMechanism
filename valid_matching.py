@@ -1,25 +1,6 @@
 from collections.abc import Iterable
 from classes import *
 
-# Function to find an augmenting path in the matching graph
-# If it finds an augmenting path, then it should flip the edges in the path
-def try_augmenting_path(graph, node):
-    if (graph.visited[node]):
-        return False
-    graph.visited[node] = True
-    for visit in graph.adj_list[node]:
-        if graph.curr_match[visit] is None or try_augmenting_path(graph, graph.curr_match[visit]):
-            graph.curr_match[visit] = node
-            graph.curr_match[node] = visit
-            return True
-    return False
-
-def matching(graph):
-    for val in graph.courses:
-        graph.visited = dict.fromkeys(graph.visited.keys(), False)
-        try_augmenting_path(graph, val)
-    return graph
-
 def complete_matching(applicant_list, course_list, edge_list):
     #--------- phd applicants----------------
     phd_applicant_list = [student for student in applicant_list if student.class_level]
@@ -27,7 +8,8 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     final_graph = MatchingGraph(course_list, phd_applicant_list, edge_list_temp)
     
-    final_graph = matching(final_graph)
+    print('Running PhD...')
+    final_graph = find_maximum_matching(final_graph)
     
     if not final_graph.check_phd_matched():
         print('No valid matching, phd')
@@ -37,30 +19,18 @@ def complete_matching(applicant_list, course_list, edge_list):
     masters_applicant_list = [student for student in applicant_list if student.class_level is False]
     masters_edge_list = [edge for edge in edge_list if edge.ta.class_level is False]
 
+
     for student in masters_applicant_list: 
         final_graph.add_node(student)
     
     for edge in masters_edge_list: 
         final_graph.add_edge(edge)
 
-    for edge in final_graph.adj_list.keys():
-        print(edge.id, ':')
-        for val in final_graph.adj_list[edge]:
-            print('     ',val.id)
-
     final_graph.visited = dict.fromkeys(final_graph.visited.keys(), False)
 
-    comp_graph = MatchingGraph(course_list, applicant_list, edge_list)
     
-    print('adj_list same?', comp_graph.adj_list == final_graph.adj_list)
-    print('curr_match same?', comp_graph.curr_match == final_graph.curr_match)
-    print('curr_match keys same?', comp_graph.curr_match.keys() == final_graph.curr_match.keys())
-    print('visited same?', comp_graph.visited == final_graph.visited) # visited should be the same
-
-    print('---POST MASTERS---')
-    final_graph = matching(final_graph)
-    final_graph.print_matches()
-    print('-------------------')
+    print('Running masters...')
+    final_graph = find_maximum_matching(final_graph)
 
     
     if not final_graph.check_courses_matched():
@@ -69,11 +39,14 @@ def complete_matching(applicant_list, course_list, edge_list):
 
     return final_graph
 
+
+
+
 def get_courses_and_edges(course_requirement_list, ta_list):
     courses = []
     edges = []
 
-    for cr in course_requirement_list:  # [("170",'', 13). (50,"", 2)]
+    for cr in course_requirement_list:
         for i in range(cr.required_ta_count):
             new_course = Course(cr.id + ' ' + str(i), cr.attributes, i + 1)
             courses.append(new_course)
@@ -81,24 +54,80 @@ def get_courses_and_edges(course_requirement_list, ta_list):
                 if cr.id in ta.pref_courses:
                     edges.append(Edge(ta, new_course))
 
-    dummy_ta_list = []
-    if (len(courses) > len(ta_list)):
-        for i in range(len(courses) - len(ta_list)):
-            dummy_ta_list.append(Applicant("dummy" + str(i), 1, True, [], [], [], []))
+    return courses, edges, ta_list
 
 
-    '''
-    print ("Courses")
-    for x in courses:
-        print ((x.id, x.ta_req_nbr))
-        
-    print("Edges")
-    for y in edges:
-        print(y.ta.id, y.ta.courses_taken, y.course.id, y.course.ta_req_nbr)
-        '''
+def get_processed_data(course_requirement_list, ta_list):
+    courses = []
+    edges = []
+    
+    
+    for cr in course_requirement_list:
+        for i in range(cr.required_ta_count):
+            new_course = Course(cr.id, cr.attributes, i + 1)
+            courses.append(new_course)
+            for ta in ta_list:
+                if cr.id in ta.pref_courses and ta.id in cr.pref_tas:
+                    edges.append(Edge(ta, new_course))
 
-    return courses, edges, ta_list # + dummy_ta_list        
-        
+def flip_edges(graph, v):
+    iter_v = v
+    while iter_v in graph.parent_map:
+        p = graph.parent_map[iter_v]
+        graph.curr_match[p], graph.curr_match[iter_v] = iter_v, p
+        iter_v = p
+
+
+def try_augmenting_path_bfs(graph, start_ta):
+    queue = [start_ta]
+    graph.reset_visited()
+    graph.visited[start_ta] = True
+    graph.parent_map = {}
+
+    while queue:
+        u = queue.pop(0)
+
+        if u in graph.courses:  
+            if graph.curr_match.get(u) is not None:
+                w = graph.curr_match[u]
+                if not graph.visited.get(w, False):
+                    graph.visited[w] = True
+                    queue.append(w)
+                    graph.parent_map[w] = u 
+            else: 
+                flip_edges(graph, u)
+                return True
+
+        elif u in graph.tas: 
+            if graph.curr_match.get(u) is not None:
+                for w in graph.adj_list[u]:
+                    if graph.curr_match.get(u) != w and not graph.visited.get(w, False):
+                        graph.visited[w] = True
+                        graph.parent_map[w] = u
+                        queue.append(w)
+            else:  
+                for w in graph.adj_list[u]:
+                    if not graph.visited.get(w, False):
+                        graph.visited[w] = True
+                        queue.append(w)
+                        graph.parent_map[w] = u 
+
+    return False 
+
+
+def find_maximum_matching(graph):
+    found_augmenting_path = True
+    while found_augmenting_path is True:
+        found_augmenting_path = False
+
+        for ta in graph.tas:
+            if graph.curr_match.get(ta) is None: 
+                if try_augmenting_path_bfs(graph, ta):
+                    found_augmenting_path = True
+
+    return graph
+
+
 
 
 
@@ -118,6 +147,8 @@ def get_courses_and_edges(course_requirement_list, ta_list):
 #course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
 #print ('course list', [x for x in course_list])
 #print ('edge list', edge_list)
+
+
 
 # graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
 # matching(graph)
