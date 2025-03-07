@@ -77,6 +77,7 @@ def build_model_min_var(courses, rankings, edges, threshold):
 
 # Sample of how to run
 #
+'''
 courses_df = pd.read_csv('testing-data/course test - courses.csv')
 applicants_df = pd.read_csv('testing-data/course test - applicants.csv')
 rankings_df = pd.read_csv('testing-data/course test - ranking.csv')
@@ -89,4 +90,5 @@ print_output(model, edge_vars, tas)
 print('----')
 model, edge_vars = build_model(courses, rankings, edges)
 model.optimize()
-print_output(model, edge_vars, tas)
+print_output(model, edge_vars, tas)'
+'''
