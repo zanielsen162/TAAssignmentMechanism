@@ -9,9 +9,9 @@ from classes import *
 from valid_matching import *
 
 # Read CSV files
-courses_df = pd.read_csv('test2c.csv')
-applicants_df = pd.read_csv('test2a.csv')
-rankings_df = pd.read_csv('test2r.csv')
+courses_df = pd.read_csv('test3c.csv')
+applicants_df = pd.read_csv('test3a.csv')
+rankings_df = pd.read_csv('test3r.csv')
 
 # Create Course objects
 courses = []
