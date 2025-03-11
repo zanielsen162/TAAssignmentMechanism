@@ -34,7 +34,7 @@ def eval_general(course, rankings, tas):
     return value
 
 # function that given the courses, rankings, and available matching constructs the ILP
-def build_model(courses, rankings, edges):
+def build_model(courses, rankings, edges, tas):
     model = gp.Model("course_allocation")
     model.setParam('OutputFlag', 0)
 
@@ -56,7 +56,7 @@ def build_model(courses, rankings, edges):
     return model, edge_vars
 
 # version with 1-norm minimized by threshold, function that given the courses, rankings, and available matching constructs the ILP
-def build_model_min_var(courses, rankings, edges, threshold):
+def build_model_min_var(courses, rankings, edges, threshold, tas):
     model = gp.Model("course_allocation")
     model.setParam('OutputFlag', 0)
 
@@ -77,16 +77,16 @@ def build_model_min_var(courses, rankings, edges, threshold):
 
 # Sample of how to run
 #
-# # courses_df = pd.read_csv('course test - courses.csv')
-# # applicants_df = pd.read_csv('course test - applicants.csv')
-# # rankings_df = pd.read_csv('course test - ranking.csv')
+courses_df = pd.read_csv('/Users/zoeynielsen/Desktop/CMPTGCS/CMPSC 110/TAAssignmentMechanism/testing-data/course test - courses.csv')
+applicants_df = pd.read_csv('/Users/zoeynielsen/Desktop/CMPTGCS/CMPSC 110/TAAssignmentMechanism/testing-data/course test - applicants.csv')
+rankings_df = pd.read_csv('/Users/zoeynielsen/Desktop/CMPTGCS/CMPSC 110/TAAssignmentMechanism/testing-data/course test - ranking.csv')
 
-# # courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
+courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
 
-# # model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8)
-# # model.optimize()
-# # print_output(model, edge_vars, tas)
-# # print('----')
-# # model, edge_vars = build_model(courses, rankings, edges)
-# # model.optimize()
-# # print_output(model, edge_vars, tas)
+# model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8, tas)
+# model.optimize()
+# print_output(model, edge_vars, tas)
+# print('----')
+model, edge_vars = build_model(courses, rankings, edges, tas)
+model.optimize()
+print_output(model, edge_vars, tas)
