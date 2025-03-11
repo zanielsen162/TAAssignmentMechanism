@@ -1,10 +1,14 @@
 
 class Course:
-    def __init__(self, id, attributes,  ta_req_nbr):
+    def __init__(self, id, attributes,  ta_req_nbr, pref_tas =[]):
         self.id = id
         self.attributes = attributes
         self.ta_req_nbr = ta_req_nbr
+        self.pref_tas = pref_tas
 
+    def unique_id(self):
+        return str(self.id) + "-" + str(self.ta_req_nbr)
+    
     def key_str(self):
         return f"Course={self.id}, Instance={self.ta_req_nbr}"
 
@@ -12,7 +16,7 @@ class Course:
         return hash(self.id + str(self.ta_req_nbr))
 
     def __eq__(self, other):
-        return isinstance(other, Course) and self.id == other.id and self.ta_req_nbr == other.ta_req_nbr 
+        return isinstance(other, Course) and self.id == other.id # and self.ta_req_nbr == other.ta_req_nbr 
 
 class Applicant:
     def __init__(self, id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses):
@@ -23,6 +27,9 @@ class Applicant:
         self.skills = skills
         self.prev_exp = prev_exp
         self.pref_courses = pref_courses
+    
+    def unique_id(self):
+        return str(self.id)
     
     def key_str(self):
         return f"TA={self.id}"
@@ -38,6 +45,12 @@ class Edge:
     def __init__(self, ta_app, course: Course):
         self.ta = ta_app
         self.course = course
+    
+    def edge_course(self):
+        return self.course
+    
+    def edge_ta(self):
+        return self.ta
 
 class Graph:
     def __init__(self, courses, tas, edges):
@@ -64,7 +77,10 @@ class MatchingGraph(Graph):
         super().__init__(courses, tas, edges)
         self.curr_match = dict.fromkeys(self.adj_list.keys(), None)
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
-    
+
+    def reset_visited(self):
+        self.visited = dict.fromkeys(self.adj_list.keys(), False)
+
     def print_matches(self):
         print("-- Matches --")
         for key in self.curr_match.keys():
@@ -81,10 +97,15 @@ class MatchingGraph(Graph):
         self.adj_list.update({node: []})
         self.curr_match.update({node: None})
         self.visited.update({node: False})
+        
+        if isinstance(node, Applicant):
+            self.tas.append(node)
+        if isinstance(node, Course):
+            self.courses.append(node)
 
     def check_phd_matched(self):
         for ta in self.tas:
-            if self.curr_match[ta].class_level and self.curr_match[ta] is None:
+            if ta.class_level and self.curr_match[ta] is None:
                 return False
         return True
     
