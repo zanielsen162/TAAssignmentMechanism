@@ -22,7 +22,7 @@ def format_dfs(courses_df, applicants_df, rankings_df):
         courses_taken = row['courses_taken'].split(',') if pd.notna(row['courses_taken']) else []
         skills = row['skills'].split(',') if pd.notna(row['skills']) else []
         prev_exp = row['prev_exp'].split(',') if pd.notna(row['prev_exp']) else []
-        pref_courses = row['pref_courses'].split(',') if pd.notna(row['pref_courses']) else []
+        pref_courses = []
         tas.append(Applicant(ta_id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses))
 
     # Create rankings dictionary
@@ -42,6 +42,9 @@ def format_dfs(courses_df, applicants_df, rankings_df):
                 rankings[course] = []
             rankings[course].append((edge, ranking))
 
+    for course in courses:
+        course.pref_tas = rankings[course]
+    
     # Create edges (all possible TA-course pairs)
     edges = [edge[0] for course in courses for edge in rankings[course]]
 
