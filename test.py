@@ -1,6 +1,7 @@
 from classes import *
 from valid_matching import *
-from ilptesting import *
+import sys
+#from using_lib import *
 
 
 #example classes and number of required TAs
@@ -42,17 +43,19 @@ def phds_matched_some_masters_graph():
 
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4, ta_5, ta_6, ta_7, ta_8, ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-    print(final_graph)
+    return ta_list
 
-print("all phds some masters")
-phds_matched_some_masters_graph()
+def smaller_case():
+    ta_1 = Applicant("1", 3.9, True, ["Algorithms", "Problem Solving"], ["C++", "Java"], ["Teaching Assistant"], ["CMPSC 16", "CMPSC 24", "CMPSC 32", "CMPSC 40"])
+    ta_2 = Applicant("2", 4.0, True, ["Algorithms", "Data Structures"], ["Python", "Java"], ["Research Assistant"], ["CMPSC 16", "CMPSC 32", "CMPSC 40", "CMPSC 130A"])
+    ta_3 = Applicant("3", 3.7, True, ["Object-Oriented Design", "C++"], ["Java", "C++"], ["Teaching Assistant"], ["CMPSC 32", "CMPSC 40", "CMPSC 64", "CMPSC 130B"])
+    ta_4 = Applicant("4", 3.8, True, ["Compilers", "Computer Organization"], ["Assembly", "C"], ["Teaching Assistant"], ["CMPSC 40", "CMPSC 64", "CMPSC 130B", "CMPSC 130A"])
+    
+    ta_12 = Applicant("12", 3.9, False, ["Data Structures", "Algorithms"], ["C++", "Python"], ["Teaching Assistant"], ["CMPSC 130A", "CMPSC 130B", "CMPSC 16", "CMPSC 24"])
+    ta_13 = Applicant("13", 3.7, False, ["Compilers", "Computer Organization"], ["Assembly", "C"], ["Teaching Assistant"], ["CMPSC 40", "CMPSC 64", "CMPSC 130B", "CMPSC 130A"])
+
+    ta_list = [ta_1, ta_2, ta_3, ta_4, ta_12, ta_13]
+    return ta_list
 
 #exact amount of TAs as number of required TAs and each is matched to a course
 def every_filled():
@@ -78,21 +81,7 @@ def every_filled():
     
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4, ta_5, ta_6, ta_7, ta_8, ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16]
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-
-    try:
-        final_graph.print_matches()
-    except:
-        print(final_graph)
-
-print("every applicant matched, every course filled")
-every_filled()
+    return ta_list
 
 #little phds and some masters, will have courses unmatched
 def little_phds_some_masters():
@@ -113,21 +102,7 @@ def little_phds_some_masters():
 
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4,ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-
-    try:
-        final_graph.print_matches()
-    except:
-        print(final_graph)
-
-print("little phds and some masters")
-little_phds_some_masters()
+    return ta_list
 
 #no phds some masters
 def no_phds():
@@ -145,21 +120,7 @@ def no_phds():
 
     # Add all TAs to the list
     ta_list = [ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-
-    try:
-        final_graph.print_matches()
-    except:
-        print(final_graph)
-
-print("no phds")
-no_phds()
+    return ta_list
 
 #some phds not matched, only put down one preference for some phds so harder to match them
 def some_phds_not_matched():
@@ -187,17 +148,7 @@ def some_phds_not_matched():
 
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4, ta_5, ta_6, ta_7, ta_8, ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18]
-    course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-    print(final_graph)
-
-print("some phds cant be matched")
-some_phds_not_matched()
+    return ta_list
 
 #all the phds are matched, each course gets phds, no masters are matched
 def phds_no_masters_matched():
@@ -227,38 +178,37 @@ def phds_no_masters_matched():
     
     # Add all TAs to the list
     ta_list = [ta_1, ta_2, ta_3, ta_4, ta_5, ta_6, ta_7, ta_8, ta_9, ta_10, ta_11, ta_12, ta_13, ta_14, ta_15, ta_16, ta_17, ta_18, ta_19, ta_20]
+    return ta_list
+
+
+if __name__ == '__main__':
+    # 3, 6, 7
+    selected = int(sys.argv[1])
+    if selected == 1:
+        ta_list = phds_matched_some_masters_graph()
+    elif selected == 2:
+        ta_list = smaller_case()
+    # not working
+    elif selected == 3:
+        ta_list = every_filled()
+    elif selected == 4:
+        ta_list = little_phds_some_masters()
+    elif selected == 5:
+        ta_list = no_phds()
+    # not working
+    elif selected == 6:
+        ta_list = some_phds_not_matched()
+    # not working
+    elif selected == 7:
+        ta_list = phds_no_masters_matched()
+    else:
+        ta_list = phds_matched_some_masters_graph()
+        
     course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges(course_requirements, ta_list)
-    
-    graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-    matching(graph)
-    graph.print_matches()
-    print('---')
-    final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
-    print(final_graph)
+    graph = MatchingGraph( course_list, ta_list_incl_dummies, edge_list)
+    matched_graph = complete_matching(ta_list, course_list, edge_list)
 
-print("phds matched no masters matched")
-phds_no_masters_matched()
-
-
-#no valid matching is always appearing 
-#if all phds are matched and the masters can now get matched...still provides 'no valid matching'
-#if every course is filled with phds we dont get the 'no valid matching'
-
-print("teststastuduyasdgua")
-
-courses_df = pd.read_csv('test2c.csv')
-applicants_df = pd.read_csv('test2a.csv')
-rankings_df = pd.read_csv('test2r.csv')
-courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
-
-
-
-course_list, edge_list, ta_list_incl_dummies = get_courses_and_edges (courses, tas)
-#course_list, edge_list = get_courses_edges ([course_1, course_2], [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6])
-#print ('course list', [x for x in course_list])
-#print ('edge list', edge_list)
-graph = MatchingGraph(course_list, ta_list_incl_dummies, edge_list)
-matching(graph)
-graph.print_matches()
-print('---')
-final_graph = complete_matching(ta_list_incl_dummies, course_list, edge_list)
+    print("--------------------final----------------------")
+    for course, ta in matched_graph.curr_match.items():
+        if course and ta:
+            print(f"{course.key_str()} is matched with {ta.key_str()}")

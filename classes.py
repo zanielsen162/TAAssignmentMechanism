@@ -84,6 +84,9 @@ class MatchingGraph(Graph):
         self.curr_match = dict.fromkeys(self.adj_list.keys(), None)
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
     
+    def reset_visited(self):
+        self.visited = dict.fromkeys(self.adj_list.keys(), False)
+    
     def print_matches(self):
         print("-- Matches --")
         for key in self.curr_match.keys():
