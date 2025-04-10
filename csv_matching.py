@@ -48,13 +48,16 @@ def check_matching_from_csv(courses_file, applicants_file, rankings_file):
     print("\n--------------------final----------------------")
     if matched_graph and matched_graph.curr_match:
         print("A valid matching was found!")
-        for course, ta in matched_graph.curr_match.items():
-            if course and ta:
-                print(f"{course.key_str()} is matched with {ta.key_str()}")
+        print("\nFinal Matchings:")
+        # Only show Course->TA matches
+        for key in matched_graph.curr_match:
+            if isinstance(key, Course) and matched_graph.curr_match[key]:
+                ta = matched_graph.curr_match[key]
+                print(f"TA {ta.id} is assigned to Course {key.id}")
         
         # Print statistics
         print("\nMatching Statistics:")
-        total_matches = sum(1 for course, ta in matched_graph.curr_match.items() if course and ta)
+        total_matches = sum(1 for k, v in matched_graph.curr_match.items() if isinstance(k, Course) and v is not None)
         print(f"Total matches made: {total_matches}")
         print(f"Total courses that needed TAs: {len(course_requirements)}")
         print(f"Total TAs available: {len(ta_list)}")

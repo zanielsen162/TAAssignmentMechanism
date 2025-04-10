@@ -94,9 +94,9 @@ def build_model_min_var(courses, rankings, edges, threshold):
 
 # Sample of how to run
 #
-courses_df = pd.read_csv('test3c.csv')
-applicants_df = pd.read_csv('test3a.csv')
-rankings_df = pd.read_csv('test3r.csv')
+courses_df = pd.read_csv('test2c.csv')
+applicants_df = pd.read_csv('test2a.csv')
+rankings_df = pd.read_csv('test2r.csv')
 
 # builds the courses, tas, rankings (as edges and associated value), and corresponding edge list
 courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
