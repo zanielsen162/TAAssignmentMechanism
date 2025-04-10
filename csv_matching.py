@@ -77,8 +77,8 @@ def check_matching_from_csv(courses_file, applicants_file, rankings_file):
 
 if __name__ == "__main__":
     # You can change these file names to match your CSV files
-    courses_file = "test3c.csv"
-    applicants_file = "test3a.csv"
-    rankings_file = "test3r.csv"
+    courses_file = "course test - courses.csv"
+    applicants_file = "course test - applicants.csv"
+    rankings_file = "course test - ranking.csv"
     
     check_matching_from_csv(courses_file, applicants_file, rankings_file) 
