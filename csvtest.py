@@ -9,9 +9,14 @@ from classes import *
 from valid_matching import *
 
 # Read CSV files
-courses_df = pd.read_csv('test3c.csv')
-applicants_df = pd.read_csv('test3a.csv')
-rankings_df = pd.read_csv('test3r.csv')
+courses_df = pd.read_csv('ACourse2.csv')
+applicants_df = pd.read_csv('ATA2.csv')
+rankings_df = pd.read_csv('AEdges.csv')
+
+print("\nDebugging Information:")
+print("Courses CSV columns:", courses_df.columns.tolist())
+print("Applicants CSV columns:", applicants_df.columns.tolist())
+print("Rankings CSV columns:", rankings_df.columns.tolist())
 
 # Create Course objects
 courses = []
@@ -19,8 +24,7 @@ for _, row in courses_df.iterrows():
     course_id = row['course']
     skills = row['skills'].split(',') if pd.notna(row['skills']) else []
     ta_req_nbr = row['TAs_req']
-    preferred_tas = row['pref'].split(',') if pd.notna(row['pref']) else []
-    courses.append(Course(course_id, skills, ta_req_nbr, preferred_tas))
+    courses.append(Course(course_id, skills, ta_req_nbr, []))
 
 # Create Applicant objects
 tas = []
@@ -34,34 +38,30 @@ for _, row in applicants_df.iterrows():
     pref_courses = row['pref_courses'].split(',') if pd.notna(row['pref_courses']) else []
     tas.append(Applicant(ta_id, gpa, class_level, courses_taken, skills, prev_exp, pref_courses))
 
-# Create edges (all possible TA-course pairs)
+# Create edges and rankings from the rankings file
 edges = []
-for course in courses:
-    preferred_tas = course.pref_tas  # List of preferred TA IDs for this course
-    for ta in tas:
-        if ta.id in preferred_tas:  # Only create an edge if the TA is preferred by the course
-            edges.append(Edge(ta, course))
-
-print("All Edges:")
-for edge in edges:
-    print(f"TA {edge.ta.id} -> Course {edge.course.id}")
-
-# Create a mapping of (ta.id, course.id) to Edge objects
-edge_map = {(edge.ta.id, edge.course.id): edge for edge in edges}
-
-# Create rankings dictionary
 rankings = {}
 for _, row in rankings_df.iterrows():
     course_id = row['course']
     ta_id = row['ta']
     ranking = row['ranking']
+    
+    # Find the corresponding Course and Applicant objects
+    course = next((c for c in courses if c.id == course_id), None)
+    ta = next((t for t in tas if t.id == ta_id), None)
+    
+    if course and ta:
+        edge = Edge(ta, course)
+        edges.append(edge)
+        if course not in rankings:
+            rankings[course] = []
+        rankings[course].append((edge, ranking))
+    else:
+        print(f"Warning: Could not find match for course_id={course_id} or ta_id={ta_id}")
 
-    # Find the corresponding Edge object using the mapping
-    edge = edge_map.get((ta_id, course_id))
-    if edge:
-        if edge.course not in rankings:
-            rankings[edge.course] = []
-        rankings[edge.course].append((edge, ranking))
+print("\nAll Edges:")
+for edge in edges:
+    print(f"TA {edge.ta.id} -> Course {edge.course.id}")
 
 print("\nRankings:")
 for course, ranked_edges in rankings.items():
@@ -71,5 +71,18 @@ for course, ranked_edges in rankings.items():
 
 # Print the number of edges created
 print(f"Number of edges: {len(edges)}")
+
+# Print courses that don't have any rankings
+print("\nCourses without rankings:")
+for course in courses:
+    if course not in rankings:
+        print(f"Course {course.id} has no rankings")
+    else:
+        print(f"Course {course.id} has {len(rankings[course])} rankings")
+
+# Print courses that have rankings
+print("\nCourses with rankings:")
+for course in rankings:
+    print(f"Course {course.id} has {len(rankings[course])} rankings")
 
 
