@@ -1,0 +1,12 @@
+<h1>Professors</h1>
+<a href="{% url 'professor_add' %}">Add New Professor</a>
+<ul>
+    {% for professor in professors %}
+        <li>
+            <a href="{% url 'professor_detail' professor.pk %}">
+                {{ professor.first_name }} {{ professor.last_name }}
+            </a>
+            [<a href="{% url 'professor_edit' professor.pk %}">Edit</a>]
+        </li>
+    {% endfor %}
+</ul>
