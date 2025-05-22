@@ -1,0 +1,5 @@
+course,skills,TAs_req,pref
+CMPSC 5A,x,2,"TA_1,TA_2,TA_3,TA_4,TA_5"
+CMPSC 9,x,1,"TA_6,TA_8,TA_10"
+CMPSC 16,x,3,"TA_11,TA_12,TA_7,TA_9,TA_10,TA_1,TA_2"
+CMPSC 24,x,2,"TA_6,TA_12,TA_4,TA_3,TA_8"
