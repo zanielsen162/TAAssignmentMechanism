@@ -1,0 +1,9 @@
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "scripts": {
+    "watch:css": "tailwindcss build static/css/main.css -o static/output.css -w"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
