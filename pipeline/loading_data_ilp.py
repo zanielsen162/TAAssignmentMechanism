@@ -47,7 +47,6 @@ def format_dfs(courses_df, applicants_df, rankings_df):
     
     # Create edges (all possible TA-course pairs)
     edges = [edge[0] for course in courses for edge in rankings[course]]
-    print(edges)
 
     return courses, tas, rankings, edges
 

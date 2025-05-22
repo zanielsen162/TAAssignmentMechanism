@@ -51,9 +51,12 @@ class Edge:
     
     def edge_ta(self):
         return self.ta
-
+    
     def __hash__(self):
         return hash(self.ta.id + self.course.id)
+
+    def __eq__(self, other):
+        return isinstance(other, Edge) and self.ta == other.ta and self.course == other.course
 
 class Graph:
     def __init__(self, courses, tas, edges):
@@ -80,9 +83,10 @@ class MatchingGraph(Graph):
         super().__init__(courses, tas, edges)
         self.curr_match = dict.fromkeys(self.adj_list.keys(), None)
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
-
+    
     def reset_visited(self):
         self.visited = dict.fromkeys(self.adj_list.keys(), False)
+    
 
     def print_matches(self):
         print("-- Matches --")
