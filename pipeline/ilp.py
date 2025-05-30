@@ -24,6 +24,7 @@ def evaluation_function(course, rankings, vars):
     denominator = (course.ta_req_nbr * max([np.abs(x[1] - B) for x in rankings])) if (course.ta_req_nbr * max([np.abs(x[1] - B) for x in rankings])) != 0 else course.ta_req_nbr
     # sum the normalized values and normalize (not that if an edge is not selected the corresponding summand is zero)
     value = (1 / denominator) * sum([vars[entry[0]] * (entry[1] - B) for entry in course_rankings])
+
     return value
 
 # for my own testing
@@ -50,14 +51,11 @@ def build_model(courses, rankings, edges, tas):
     # M = model.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name='M')
     
     # ensure every PhD student is assigned to a course
-    model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) == 1 for ta in tas if ta.class_level)
+    # model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if ta.class_level)
     # every masters student is assigned to at most one course
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.ta == ta) <= 1 for ta in tas if not ta.class_level)
     # every course receives the necessary number of TAs
     model.addConstrs(gp.quicksum(edge_vars[edge] for edge in edges if edge.course == course) == course.ta_req_nbr for course in courses)
-    
-    # model.addConstrs(m <= evaluation_function(course, rankings, edge_vars) for course in courses)
-    # model.addConstrs(M >= evaluation_function(course, rankings, edge_vars) for course in courses)
 
     # maximize the evaluation function for each course
     model.setObjective(sum([evaluation_function(course, rankings, edge_vars) for course in courses]), GRB.MAXIMIZE)
@@ -87,17 +85,22 @@ def build_model_min_var(courses, rankings, edges, threshold, tas):
 
 # Sample of how to run
 #
-courses_df = pd.read_csv('testing-data/course test - courses.csv')
-applicants_df = pd.read_csv('testing-data/course test - applicants.csv')
-rankings_df = pd.read_csv('testing-data/course test - ranking.csv')
+courses_df = pd.read_csv('real-data-runs/test-sets/course_enrollment.csv')
+applicants_df = pd.read_csv('real-data-runs/test-sets/cleaned-ta-app-data.csv')
+rankings_df = pd.read_csv('real-data-runs/test-sets/prof_preferences_rankings.csv')
+
+# courses_df = pd.read_csv('testing-data/test1c.csv')
+# applicants_df = pd.read_csv('testing-data/test1a.csv')
+# rankings_df = pd.read_csv('testing-data/test1r.csv')
 
 # builds the courses, tas, rankings (as edges and associated value), and corresponding edge list
 courses, tas, rankings, edges = format_dfs(courses_df, applicants_df, rankings_df)
 
-model, edge_vars = build_model_min_var(courses, rankings, edges, 0.8, tas)
-model.optimize()
-print_output(model, edge_vars, tas)
+# model, edge_vars = build_model_min_var(courses, rankings, edges, 4, tas)
+# model.optimize()
+# print_output(model, edge_vars, tas)
 # print('----')
 model, edge_vars = build_model(courses, rankings, edges, tas)
+print(len(courses), len(tas), len(edges))
 model.optimize()
 print_output(model, edge_vars, tas)
